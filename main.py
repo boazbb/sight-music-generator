@@ -3,7 +3,7 @@ The main file, all of the actual generating and writing is done here,
 while the note and rhythm structures are in note_data.py
 """
 
-import os
+import os, sys
 from note_data import *
 import piano, melodic
 
@@ -19,12 +19,22 @@ class Score:
 		self.file.write('\\version "2.18.2"\n')
 		self.file.write('\\header {\n  title = "'+TITLE+'"\n  composer = "'+COMPOSER+'"\n}')
 
-		# Writing piano staff
-		instru = melodic.Melodic(self.file)
+		inst, bars = self.parse_args(sys.argv)
 		
-		instru.writeBars(32)
+		inst.writeBars(bars)
 		
-
+		# Parsing the arguemnts
+	def parse_args(self, arguments):
+		usage = "Wrong Syntax. usage: main.py -piano/-melodic numBars"
+		if (sys.argv[1] == "-piano"):
+			inst = piano.Piano(self.file)
+		elif (sys.argv[1] == "-melodic"):
+			inst = melodic.Melodic(self.file)
+		else:
+			print(usage)
+			exit()
+		bars = int(sys.argv[2])
+		return inst, bars
 
 def main():
 	s = Score()
